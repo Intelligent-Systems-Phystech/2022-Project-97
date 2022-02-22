@@ -1,23 +1,16 @@
 <div align="center">
   <H1>
-    Название исследуемой задачи
+    Anti-Distillation or Teacher Learning: Knowledge Transfer from Simple Model to a Complex One
   </H1>
-  Тип научной работы<br><br>
-  Имя Отчество Фамилия, Имя Отчество Фамилия
+
+  Ксения Евгеньевна Петрушина
 </div><br>
 <div align="center">
-  Научный руководитель: степень Фамилия Имя Отчество <br>
-  Научный консультант(при наличии): степень Фамилия Имя Отчество
+  Научный руководитель: д.ф.-м.н. Стрижов Вадим Викторович<br>
+  Научные консультанты: Грабовой Андрей Валериевич, Бахтеев Олег Юрьевич
 </div>
 
-## Аннотация
-Purus sit amet luctus venenatis lectus magna fringilla. Condimentum id venenatis a condimentum vitae sapien. Auctor neque vitae tempus quam pellentesque nec nam aliquam. Eget egestas purus viverra accumsan in. Nam aliquam sem et tortor. Donec et odio pellentesque diam volutpat commodo. Odio pellentesque diam volutpat commodo sed egestas. Sit amet dictum sit amet justo. Pellentesque sit amet porttitor eget. Imperdiet sed euismod nisi porta lorem mollis aliquam ut. Quis varius quam quisque id diam vel quam elementum. Ornare lectus sit amet est placerat in. Vulputate dignissim suspendisse in est ante. Elit sed vulputate mi sit amet mauris. Egestas sed tempus urna et pharetra pharetra. Viverra tellus in hac habitasse platea dictumst vestibulum rhoncus.
+## Annotation
+We are considering the problem of adapting the model to a new data with a large amount of information. It is proposed to build a model of greater complexity with further knowledge transfer from a simple model to it. It is necessary to take into account not only the quality of the prediction on the original samples, but also the adaptability to novel data and the robustness of the obtained solution.
 
-## Публикации по теме исследования
-1. 
-
-## Выступления на конференциях по теме исследования
-1. 
-
-## Программные модули разработанные в рамках исследования
-1. 
+Рассматривается задача адаптации модели к новой выборке с большим количеством информации. Для адаптации предлагается построить новую модель большей сложности с дальнейшим переносом в нее информации от простой модели. При переносе информации требуется учитывать не только качество прогноза на исходной выборке, но так же и адаптируемость новой модели к новой выборке и робастнсоть полученного решения.
