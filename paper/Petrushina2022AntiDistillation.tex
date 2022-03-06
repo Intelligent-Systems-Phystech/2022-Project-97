@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[80pt]{article}
 \usepackage{arxiv}
 
 \usepackage[utf8]{inputenc}
@@ -15,10 +15,9 @@
 \usepackage{natbib}
 \usepackage{doi}
 
-
 \title{Anti-Distillation: Knowledge Transfer from Simple Model to a Complex One}
 
-\author{\textbf{Kseniia Petrushina,~Andrey Grabovoy,~Oleg Bakhteev,~Vadim Strijov} \\
+\author{\textbf{Kseniia~Petrushina,~Andrey~Grabovoy,~Oleg Bakhteev,~Vadim~Strijov} \\
 	Moscow Institute of Physics and Technology \\
 	\texttt{\{petrushina.ke,~grabovoy.av,~bakhteev,~strijov\}@phystech.edu}
 }
@@ -28,51 +27,61 @@
 \renewcommand{\shorttitle}{Anti-Distillation: Knowledge Transfer from Simple Model to a Complex One}
 
 \hypersetup{
-pdftitle={A template for the arxiv style},
-pdfsubject={q-bio.NC, q-bio.QM},
-pdfauthor={David S.~Hippocampus, Elias D.~Striatum},
-pdfkeywords={First keyword, Second keyword, More},
+pdftitle={Anti-Distillation: Knowledge Transfer from Simple Model to a Complex One},
+pdfauthor={Kseniia~Petrushina},
+pdfkeywords={Distillation, Knowledge Transfer, Weight Initialization, Machine Learning},
 }
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-	This paper considers the problem of adapting the model to new data with a large amount of information. We propose to construct a complex model with further knowledge transfer from a simple model to it. It is necessary to take into account not only the quality of the prediction on the original samples but also the adaptability to new data and the robustness of the obtained solution. The novelty of the work lies in the fact that our method allows adapting the pre-trained model to a more heterogeneous dataset. This study considers both probabilistic and algebraic methods for obtaining a new model. In the computational experiment, we analyse the quality of predictions on synthetic and natural samples. FashionMnist and CIFAR10 datasets are our sources of real-world data.
+	This paper considers the problem of adapting the model to new data with a large amount of information. We propose to build a more complex model using the parameters of a simple one. It is necessary to take into account not only the accuracy of the prediction on the original samples but also the adaptability to new data and the stability of the obtained solution. The novelty of the work lies in the fact that our method allows adapting the pre-trained model to a more heterogeneous dataset. This study uses both probabilistic and algebraic methods for obtaining a student model. In the computational experiment, we analyse the quality of predictions on synthetic and natural samples. FashionMnist and CIFAR10 datasets are our sources of real-world data.
 \end{abstract}
 
 \keywords{Distillation \and Knowledge Transfer \and Weight Initialization \and Machine Learning}
 
 \section{Introduction}
-In the modern world, the number of machine learning tasks grows rapidly, as is the amount of data to be processed. Typically, training a model from scratch can lead to poor results or take a long time. To get better results faster, researchers have been developing various methods allowing to use of existing trained models to solve new problems. For instance, there are knowledge distillation \citep{hinton2015distilling, lopezpaz2016unifying}, transfer learning \citep{zhuang2019acomprehensive}, fine-tuning, low-rank model approximation \citep{yu2017oncompressing}. Moreover, scientists have studied methods for initializing model weights for faster convergence \citep{glorot2010understanding}. These approaches help to decrease the time needed for training or inference and achieve higher quality. 
+Training a model from scratch can lead to poor results or take a long time. To get better results faster, researchers have been developing various methods allowing to use existing trained models to solve new problems. For instance, there are knowledge distillation \citep{hinton2015distilling, lopezpaz2016unifying}, transfer learning \citep{zhuang2019acomprehensive}, fine-tuning, low-rank model approximation \citep{yu2017oncompressing}. Moreover, there are methods for initializing model weights for faster convergence \citep{glorot2010understanding}. These approaches help to decrease the time needed for training or inference and achieve higher quality.
 
-Consider the distillation method in more detail. Statement of the initial problem is the transfer of knowledge from a cumbersome neural network or ensemble of ones to a smaller model in the classification task. Hinton and others were able to achieve this by training the student model to reproduce the probability distribution of the classes produced by the teacher model. The use of such soft targets helped to carry more information, so the student models generalization ability is comparable to the teachers. However, this research focuses on model compression under conditions of input data persistence. And we want to solve the inverse problem: in a sense to keep the model under conditions of increasing sample complexity.
+Consider the distillation method. Statement of the initial problem is the transfer of knowledge from a cumbersome neural network or ensemble of ones to a smaller model in the classification problem. Hinton and others \citep{hinton2015distilling} were able to achieve this by training the student model to reproduce the probability distribution of the classes produced by the teacher model. The use of such soft targets helped to carry more information, so the student models generalization ability is comparable to the teachers. However, this research focuses on model compression under conditions of input data persistence. We want solve the inverse problem: to keep the model under conditions of increasing sample complexity.
 
-Thus, the novelty of this work lies in the proposal of a method for increasing the complexity of the model based on a pre-trained one. This is done by growing the dimension of the weight space and initializing part of the student neural network with teacher model weights. We propose that our approach allows us to speed up neural network training and obtain a more stable solution. As the learning is supposed to start close to the optimum point. In this way, we can adapt the pre-trained model to more variable data and reuse previously learned information.
+This work proposes a method for increasing the complexity of the model based on a pre-trained one. This is done by growing the dimension of the weight space and initializing part of the student neural network with teacher model weights. Our approach allows to speed up neural network training and obtain a more robust model. As the learning is supposed to start close to the optimum point. In this way, we can adapt the pre-trained model to more variable data and reuse previously learned information.
 
-This paper presents computational experiments on various ways of complicating the model. We consider fully connected, convolutional layers and LSTM modules. An experiment is to compare uniform initialization with one based on a previously trained model and analyse differences in convergence rate, prediction variance, and achieved quality.
+This paper presents computational experiments on various ways of complicating the model. We consider fully connected, convolutional layers and LSTM modules. The experiment compares uniform initialization with one based on a previously trained model and analyse differences in convergence rate, prediction variance, and achieved quality.
 
-\section{Setup}
-We focus on $c$-class classification, although the same ideas apply to other machine learning tasks. Consider two samples
-$$S_1 = \{(x_i, y_i)\}_{i=1}^{N_1},~x_i \in \mathbb{R}^{d_1},~y_i \in \Delta^{c_1},$$
-$$S_2 =  \{(x_j', y_j')\}_{j=1}^{N_2},~x_j' \in \mathbb{R}^{d_2},~y_j' \in \Delta^{c_2},$$
+\section{Anti-Distillation problem statement}
+Consider $c$-class classification. There are two sets
+$$\mathfrac{D}_1 = \{(\mathbf{x}_i, y_i)\}_{i=1}^{m_1},~\mathbf{x}_i \in \mathbb{R}^{n_1},~y_i \in \mathfrac{C}_1 = \{1, \dots, c_1\},$$
+$$\mathfrac{D}_2 =  \{(\mathbf{x}_i, y_i)\}_{i=1}^{m_2},~\mathbf{x}_i \in \mathbb{R}^{n_2},~y_i \in \mathfrac{C}_2 = \{1, \dots, c_2\}.$$
 
-where $\Delta^c$ is the set of $c$-dimentional probability vectors.
+Let $\Delta^c$ be the set of $c$-dimentional probability vectors.
 
-Having a teacher model $f_{tr}: \mathbb{R}^{d_1} \rightarrow \Delta^{c_1},~f_{tr}(x) = f(x, w^*)$, where weights of the model are defined as follows:
-$$w^* =  \underset{w}{\arg\min}~\mathcal{L}_w =\underset{w}{\arg\min}~\sum\limits_{i=1}^{N_1} l (y_i,~f(x_i, w)),$$
+Having the teacher model 
+
+\[g_\text{tr}: \mathbb{R}^{n_1} \rightarrow \Delta^{c_1},~g_\text{tr}(\mathbf{x}) = g(\mathbf{x}, \hat{\mathbf{u}})\] 
+
+where optimal model parameters $\hat{\mathbf{u}} \in \mathbb{R}^{N_{\text{tr}}}$ are defined as follows:
+$$\hat{\mathbf{u}} =  \underset{\mathbf{u}}{\arg\min}~\mathcal{L}_g(\mathbf{u}, \mathfrac{D}_1) =\underset{\mathbf{u}}{\arg\min}~\sum\limits_{i=1}^{m_1} l \bigl(y_i,~f(\mathbf{x}_i, \mathbf{w})\bigr),$$
 here, $l$ is a cross-entropy loss 
-$$l(y, \hat{y}) = -\sum\limits_{k=1}^{c} y_k \log{\hat{y}_k},~y \in \Delta^c,$$
+$$l(y, \hat{y}) = -\sum\limits_{k=1}^{c} [y = k] \log{\hat{y}_k},~y \in \mathfrac{C},~\hat{y} \in \Delta^c,$$
 
-our approach proposes constructing student model $f_{st}: \mathbb{R}^{d_2} \rightarrow \Delta^{c_2},~f_{st}(x) = g(x, u^*)$,
+our approach proposes constructing student model 
 
-$$u^* =  \underset{u}{\arg\min}~\mathcal{L}_u = \underset{u}{\arg\min}~\sum\limits_{j=1}^{N_2} l (y_j',~g(x_j', u)).$$
+\[f_\text{st}: \mathbb{R}^{n_2} \rightarrow \Delta^{c_2},~f_\text{st}(\mathbf{x}) = f(\mathbf{x}, \hat{\mathbf{w}}),\]
 
-We find the solution to the above optimization problem using gradient optimization methods. Model weights update as
-$$u_{t+1} = T(u_t | \mathcal{L}_u, S_2),$$
-where $T: \mathbb{R}^{|u|} \rightarrow \mathbb{R}^{|u|}$ is the optimization operator and $t \in \mathbb{N}$ is the gradient step number.
+$$\hat{\mathbf{w}} =  \underset{\mathbf{w}}{\arg\min}~\mathcal{L}_f(\mathbf{w}, \mathfrac{D}_2).$$
 
-In this case, function $\varphi: \mathbb{R}^{|w|} \rightarrow \mathbb{R}^{|u|}$ determines student model initialization $u_1 = \varphi(w^*)$.
+We find the solution to the above optimization problem using gradient optimization methods. The model weights $\mathbf{w} \in \mathbb{R}^{N_{\text{st}}}$ update as
+\[\mathbf{w}_{t+1} = T(\mathbf{w}_t |~\mathcal{L}_f,~\mathfrac{D}_2),\]
+\[T: \mathbb{R}^{N_\text{st}} \rightarrow \mathbb{R}^{N_\text{st}}\]
+
+is the optimization operator and $t \in \mathbb{N}$ is the gradient step number.
+
+The function 
+\[\varphi: \mathbb{R}^{N_\text{tr}} \rightarrow \mathbb{R}^{N_\text{st}}\]
+
+determines the student model initial parameters $\mathbf{w}_1 = \varphi(\hat{\mathbf{u}})$.
 
 \bibliographystyle{plain}
 \bibliography{Petrushina2022AntiDistillation.bib}

@@ -11,7 +11,7 @@
 \AtBeginDocument{
   \newgeometry{
     textheight=9in,
-    textwidth=6.5in,
+    textwidth=6in,
     top=1in,
     headheight=14pt,
     headsep=25pt,
@@ -48,12 +48,13 @@
 
 % font sizes with reduced leading
 \renewcommand{\normalsize}{%
-  \@setfontsize\normalsize\@xpt\@xipt
+  \@setfontsize\normalsize{12}\@xpt
   \abovedisplayskip      7\p@ \@plus 2\p@ \@minus 5\p@
   \abovedisplayshortskip \z@ \@plus 3\p@
   \belowdisplayskip      \abovedisplayskip
   \belowdisplayshortskip 4\p@ \@plus 3\p@ \@minus 3\p@
 }
+
 \normalsize
 \renewcommand{\small}{%
   \@setfontsize\small\@ixpt\@xpt

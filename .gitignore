@@ -120,3 +120,11 @@ logs/
 */mnist
 *.csv
 !.dvc
+
+# LaTeX files
+*.sty
+*.aux
+*.dvi
+*.out
+*.bbl
+*.blg
