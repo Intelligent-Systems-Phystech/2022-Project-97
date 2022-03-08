@@ -36,7 +36,7 @@ pdfkeywords={Distillation, Knowledge Transfer, Weight Initialization, Machine Le
 \maketitle
 
 \begin{abstract}
-	This paper considers the problem of adapting the model to new data with a large amount of information. We propose to build a more complex model using the parameters of a simple one. It is necessary to take into account not only the accuracy of the prediction on the original samples but also the adaptability to new data and the stability of the obtained solution. The novelty of the work lies in the fact that our method allows adapting the pre-trained model to a more heterogeneous dataset. This study uses both probabilistic and algebraic methods for obtaining a student model. In the computational experiment, we analyse the quality of predictions on synthetic and natural samples. FashionMnist and CIFAR10 datasets are our sources of real-world data.
+	This paper considers the problem of adapting the model to new data with a large amount of information. We propose to build a more complex model using the parameters of a simple one. It is necessary to take into account not only the accuracy of the prediction on the original samples but also the adaptability to new data and the stability of the obtained solution. The novelty of the work lies in the fact that our method allows adapting the pre-trained model to a more heterogeneous dataset. This study uses both probabilistic and algebraic methods for obtaining a student model. In the computational experiment, we analyse the quality of predictions on FashionMnist and CIFAR10 datasets.
 \end{abstract}
 
 \keywords{Distillation \and Knowledge Transfer \and Weight Initialization \and Machine Learning}
@@ -53,20 +53,22 @@ This paper presents computational experiments on various ways of complicating th
 \section{Anti-Distillation problem statement}
 Consider $c$-class classification. There are two sets
 $$\mathfrac{D}_1 = \{(\mathbf{x}_i, y_i)\}_{i=1}^{m_1},~\mathbf{x}_i \in \mathbb{R}^{n_1},~y_i \in \mathfrac{C}_1 = \{1, \dots, c_1\},$$
-$$\mathfrac{D}_2 =  \{(\mathbf{x}_i, y_i)\}_{i=1}^{m_2},~\mathbf{x}_i \in \mathbb{R}^{n_2},~y_i \in \mathfrac{C}_2 = \{1, \dots, c_2\}.$$
+$$\mathfrac{D}_2 =  \{(\mathbf{x}'_i, y'_i)\}_{i=1}^{m_2},~\mathbf{x}'_i \in \mathbb{R}^{n_2},~y'_i \in \mathfrac{C}_2 = \{1, \dots, c_2\}.$$
 
-Let $\Delta^c$ be the set of $c$-dimentional probability vectors.
+Set $\mathfrac{D}_2$ is \textit{more complex} than $\mathfrac{D}_1$, i.e., $n_2 > n_1$ or $c_2 > c_1$.
 
 Having the teacher model 
 
 \[g_\text{tr}: \mathbb{R}^{n_1} \rightarrow \Delta^{c_1},~g_\text{tr}(\mathbf{x}) = g(\mathbf{x}, \hat{\mathbf{u}})\] 
 
 where optimal model parameters $\hat{\mathbf{u}} \in \mathbb{R}^{N_{\text{tr}}}$ are defined as follows:
-$$\hat{\mathbf{u}} =  \underset{\mathbf{u}}{\arg\min}~\mathcal{L}_g(\mathbf{u}, \mathfrac{D}_1) =\underset{\mathbf{u}}{\arg\min}~\sum\limits_{i=1}^{m_1} l \bigl(y_i,~f(\mathbf{x}_i, \mathbf{w})\bigr),$$
+$$\hat{\mathbf{u}} =  \underset{\mathbf{u}}{\arg\min}~\mathcal{L}_g(\mathbf{u}, \mathfrac{D}_1) =\underset{\mathbf{u}}{\arg\min}~\sum\limits_{i=1}^{m_1} l \bigl(y_i,~g(\mathbf{x}_i, \mathbf{u})\bigr),$$
 here, $l$ is a cross-entropy loss 
 $$l(y, \hat{y}) = -\sum\limits_{k=1}^{c} [y = k] \log{\hat{y}_k},~y \in \mathfrac{C},~\hat{y} \in \Delta^c,$$
 
-our approach proposes constructing student model 
+where $\Delta^c$ is the set of $c$-dimentional probability vectors.
+
+Our approach proposes constructing student model 
 
 \[f_\text{st}: \mathbb{R}^{n_2} \rightarrow \Delta^{c_2},~f_\text{st}(\mathbf{x}) = f(\mathbf{x}, \hat{\mathbf{w}}),\]
 
@@ -81,7 +83,20 @@ is the optimization operator and $t \in \mathbb{N}$ is the gradient step number.
 The function 
 \[\varphi: \mathbb{R}^{N_\text{tr}} \rightarrow \mathbb{R}^{N_\text{st}}\]
 
-determines the student model initial parameters $\mathbf{w}_1 = \varphi(\hat{\mathbf{u}})$.
+determines the student model parameters initialization $\mathbf{w}_1 = \varphi(\hat{\mathbf{u}})$.
+
+\section{Our setup}
+
+We construct a more complex model by extending fully connected layers and increasing number of feature maps in convolutional layers. There are different initialization methods for extended weights:
+
+\begin{enumerate}
+    \item Zero initialization.
+    \item Uniform initialization.
+\end{enumerate}
+
+\section{Computational experiment}
+
+The goal of computational experiment is to compare the performance of models depending on the initialization of parameters. 
 
 \bibliographystyle{plain}
 \bibliography{Petrushina2022AntiDistillation.bib}
