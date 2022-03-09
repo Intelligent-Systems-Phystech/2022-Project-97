@@ -126,5 +126,6 @@ logs/
 *.aux
 *.dvi
 *.out
+*.gz
 *.bbl
 *.blg
