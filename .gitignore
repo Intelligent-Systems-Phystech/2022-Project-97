@@ -129,3 +129,6 @@ logs/
 *.gz
 *.bbl
 *.blg
+*.nav
+*.snm
+*.toc
