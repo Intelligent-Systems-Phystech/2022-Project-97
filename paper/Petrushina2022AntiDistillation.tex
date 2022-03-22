@@ -61,7 +61,7 @@ Set $D_2$ is \textit{more complex} than $D_1$, i.e., $n_2 > n_1$ or $c_2 > c_1$.
 
 Having the teacher model 
 
-\[g_\text{tr}: \mathbb{R}^{n_1} \rightarrow \Delta^{c_1},~g_\text{tr}(\mathbf{x}) = g(\mathbf{x}, \hat{\mathbf{u}})\] 
+\[g_\text{tr}: \mathbb{R}^{n_1} \rightarrow \Delta^{c_1},~g_\text{tr}(\mathbf{x}) = g(\mathbf{x}, \hat{\mathbf{u}}),\] 
 
 where optimal model parameters $\hat{\mathbf{u}} \in \mathbb{R}^{N_{\text{tr}}}$ are defined as follows:
 $$\hat{\mathbf{u}} =  \underset{\mathbf{u}}{\arg\min}~\mathcal{L}_g(\mathbf{u}, D_1) =\underset{\mathbf{u}}{\arg\min}~\sum\limits_{i=1}^{m_1} l \bigl(y_i,~g(\mathbf{x}_i, \mathbf{u})\bigr),$$
@@ -88,13 +88,35 @@ The function
 determines the student model parameters initialization $\mathbf{w}_1 = \varphi(\hat{\mathbf{u}})$.
 
 \section{Our setup}
+\label{sec:setup}
 
 We construct a more complex model by extending fully connected layers and increasing number of feature maps in convolutional layers. There are different initialization methods for extended weights:
 
 \begin{enumerate}
     \item Zero initialization.
-    \item Uniform initialization $U[0, \theta]$.
+    \item Uniform initialization $U[-\theta, \theta]$.
 \end{enumerate}
+
+\section{Theory}
+
+We define the finction $\varphi: \mathbb{R}^{N_\text{tr}} \rightarrow \mathbb{R}^{N_\text{st}}$ as
+$$\varphi(\mathbf{u}) = \underset{\mathbf{w}}{\arg\min}~\mathcal{L}(\mathbf{w}),$$
+where $\mathcal{L} = \lambda_1 \mathcal{L}_f(\mathbf{w}, D_1) + \lambda_2 \mathcal{L}_2 (\mathbf{u}, \mathbf{w}) + \lambda_3 \mathcal{L}_3^\delta (D_1) + \lambda_4 \mathcal{L}_4 \bigl(\displaystyle \frac{\partial^2 \mathcal{L}_f}{\partial \mathbf{w}^2}\bigr)$.
+
+\begin{enumerate}
+    \item $\mathcal{L}_f(\mathbf{w}, D_1)$ loss is responsible for having the optimal weights on the simpler dataset $D_1$.
+    \item $\mathcal{L}_2 (\mathbf{u}, \mathbf{w}) = \|\textbf{u} - \textbf{w}[\textbf{u}]\|^2_2$ provides a small difference between the weights of the teacher model and the student model in the respective places.
+    \item $\mathcal{L}_3^\delta (D_1) = \displaystyle \sum \limits_{(\textbf{x}, y) \in D_1} \displaystyle \mathbb{E}_{\textbf{x}' \in U_\delta(\textbf{x})} \mathcal{L}_f(\mathbf{w}, \textbf{x}', y)$  and  $\mathcal{L}_4 \bigl(\displaystyle \frac{\partial^2 \mathcal{L}_f}{\partial \mathbf{w}^2}\bigr) = \|diag{\bigl(\displaystyle \frac{\partial^2 \mathcal{L}_f}{\partial \mathbf{w}^2}\bigr)}\|^2_2$ losses account for stability of solution to noise in input data.
+\end{enumerate}
+
+Wherein $\lambda_1, \lambda_2 > 0, \lambda_3, \lambda_4 \ge 0$ and besides $\lambda_3 \lambda_4 = 0$.
+
+Quality criterion is $\mathcal{L}_3^\delta (D_2)$, since we are interested in getting a model that is resistant to input data corruption. In addition, we consider accuracy of predictions on $D_2$ set.
+
+\newtheorem{hypothesis}{Hypothesis}
+\begin{hypothesis}
+Student models initialized by the result of applying the function $\varphi$ to the weights of the pre-trained teacher model are more persistent and achieve higher accuracy than models with default weights.
+\end{hypothesis}
 
 \section{Computational experiment}
 
@@ -110,7 +132,7 @@ The goal of computational experiment is to compare the performance of models dep
 
 \subsection{Configuration of algorithm run}
 
-We carry out the experiments as follows: we train the teacher model, increase its complexity as described in Section 3, and compare different ways of initializing the weights of the model. There are three cases under consideration: uniform initialization of all model weights, zero and uniform initialization of extended weights. We compare them by measuring accuracy of predictions, cross-entropy loss value on validation sample, and prediction variance. Also we investigate the case of noisy input data, considering above quality measures depending on the percentage of image corrupted.
+We carry out the experiments as follows: we train the teacher model, increase its complexity as described in \autoref{sec:setup}, and compare different ways of initializing the weights of the model. There are three cases under consideration: uniform initialization of all model weights, zero and uniform initialization of extended weights. We compare them by measuring accuracy of predictions, cross-entropy loss value on validation sample, and prediction variance. Also we investigate the case of noisy input data, considering above quality measures depending on the percentage of image corrupted.
 
 \subsection{List of expected tables and figures}
 
@@ -126,8 +148,8 @@ We carry out the experiments as follows: we train the teacher model, increase it
 It follows from the result that zero initialization on average outperformes other initialization methods. As seen in \ref{fig:1} uniform initialization of extended weights has the smallest variance, but this method on average worse than others. It is worth paying attention to checking other values of $\theta$, where extended uniform parameters selects from $U[0, \theta]$. As due to large $\theta$ values, information from the teacher model may be lost.
 
 \begin{figure}[!t]
-  \subfloat{\includegraphics[width=0.5\textwidth]{../figures/accuracy.png}}
-  \subfloat{\includegraphics[width=0.5\textwidth]{../figures/loss.png}}\\
+  \subfloat{\includegraphics[width=0.5\textwidth]{accuracy.png}}
+  \subfloat{\includegraphics[width=0.5\textwidth]{loss.png}}\\
  \caption{Comparison of quality metrics for different initialization methods}
   \label{fig:1}
 \end{figure}
