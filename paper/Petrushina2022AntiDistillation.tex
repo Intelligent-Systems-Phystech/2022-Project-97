@@ -94,7 +94,7 @@ We construct a more complex model by extending fully connected layers and increa
 
 \begin{enumerate}
     \item Zero initialization.
-    \item Uniform initialization $U[-\theta, \theta]$.
+    \item Uniform initialization $U[0, \theta]$.
 \end{enumerate}
 
 \section{Theory}
@@ -106,7 +106,7 @@ where $\mathcal{L} = \lambda_1 \mathcal{L}_f(\mathbf{w}, D_1) + \lambda_2 \mathc
 \begin{enumerate}
     \item $\mathcal{L}_f(\mathbf{w}, D_1)$ loss is responsible for having the optimal weights on the simpler dataset $D_1$.
     \item $\mathcal{L}_2 (\mathbf{u}, \mathbf{w}) = \|\textbf{u} - \textbf{w}[\textbf{u}]\|^2_2$ provides a small difference between the weights of the teacher model and the student model in the respective places.
-    \item $\mathcal{L}_3^\delta (D_1) = \displaystyle \sum \limits_{(\textbf{x}, y) \in D_1} \displaystyle \mathbb{E}_{\textbf{x}' \in U_\delta(\textbf{x})} \mathcal{L}_f(\mathbf{w}, \textbf{x}', y)$  and  $\mathcal{L}_4 \bigl(\displaystyle \frac{\partial^2 \mathcal{L}_f}{\partial \mathbf{w}^2}\bigr) = \|diag{\bigl(\displaystyle \frac{\partial^2 \mathcal{L}_f}{\partial \mathbf{w}^2}\bigr)}\|^2_2$ losses account for stability of solution to noise in input data.
+    \item $\mathcal{L}_3^\delta (D_1) = \displaystyle \sum \limits_{(\textbf{x}, y) \in D_1} \displaystyle \mathbb{E}_{\textbf{x}' \in U_\delta(\textbf{x})} \mathcal{L}_f(\mathbf{w}, \textbf{x}', y)$  and  $\mathcal{L}_4 \bigl(\displaystyle \frac{\partial^2 \mathcal{L}_f}{\partial \mathbf{w}^2}\bigr) = \|diag{\bigl(\displaystyle \frac{\partial^2 \mathcal{L}_f}{\partial \mathbf{w}^2}\bigr)}\|^2$ losses account for stability of solution to noise in input data.
 \end{enumerate}
 
 Wherein $\lambda_1, \lambda_2 > 0, \lambda_3, \lambda_4 \ge 0$ and besides $\lambda_3 \lambda_4 = 0$.
