@@ -96,7 +96,7 @@ We construct a more complex model by extending fully connected layers and increa
 
 \begin{enumerate}
     \item Zero initialization.
-    \item Uniform initialization $U[0, \theta]$.
+    \item Uniform initialization $U[-\theta, \theta]$.
 \end{enumerate}
 
 \section{Theory}
@@ -148,7 +148,7 @@ We carry out the experiments as follows: we train the teacher model, increase it
 
 \subsection{Preliminary report}
 
-It follows from the result that zero initialization on average outperformes other initialization methods. As seen in \ref{fig:1} uniform initialization of extended weights has the smallest variance, but this method on average worse than others. It is worth paying attention to checking other values of $\theta$, where extended uniform parameters selects from $U[0, \theta]$. As due to large $\theta$ values, information from the teacher model may be lost.
+It follows from the result that uniform initialization using the teacher model weights on average outperformes other initialization methods. As seen in \ref{fig:1} networks utilizing Anti-Distillation have smaller variance than models with completely uniform initialization of weights.
 
 \begin{figure}[!t]
   \subfloat{\includegraphics[width=0.5\textwidth]{base_acc.png}}
@@ -159,7 +159,9 @@ It follows from the result that zero initialization on average outperformes othe
 
 \subsection{Error analysis}
 
-For the experiment we compare two ways of initialization: uniform initialization and initialization with $\varphi(\textbf{u}^*)$, where $\lambda_2 = 1$, i.e., preserving the teacher model weights and uniformly initializing extended ones. 
+For the experiment we compare two ways of initialization: uniform initialization and initialization with $\varphi(\textbf{u}^*)$, where $\lambda_2 = 1$, i.e., preserving the teacher model weights and uniformly initializing extended ones.
+
+$D_2$ set consists of Fasion-MNIST and $D_1 = \{(\textbf{x}, y) \;|\; (\textbf{x}, y) \in D_2, y \in C_1\}$, $C_1 \subset C_2$, $C_1 = \{0, \dots 4\}, C_2 = \{0, \dots 9\}$. 
 
 \begin{figure}[!t]
   \subfloat{\includegraphics[width=0.5\textwidth]{l2_acc.png}}
@@ -167,6 +169,8 @@ For the experiment we compare two ways of initialization: uniform initialization
  \caption{Comparison of quality metrics for different initialization methods}
   \label{fig:2}
 \end{figure}
+
+As seen in \ref{fig:2} models utilizing Anti-Distillation with $\lambda_2 = 1$ on average have smaller variance and higher accuracy than models with completely uniform initialization of parameters.
 
 \newpage
 
