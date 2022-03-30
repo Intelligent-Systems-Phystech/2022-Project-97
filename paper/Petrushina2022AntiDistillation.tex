@@ -16,6 +16,8 @@
 \usepackage{doi}
 \usepackage{subfig, epsfig}
 
+\graphicspath{ {../figures/} }
+
 \title{Anti-Distillation: Knowledge Transfer from Simple Model to a Complex One}
 
 \author{\textbf{Kseniia~Petrushina,~Andrey~Grabovoy,~Oleg Bakhteev,~Vadim~Strijov} \\
@@ -149,10 +151,21 @@ We carry out the experiments as follows: we train the teacher model, increase it
 It follows from the result that zero initialization on average outperformes other initialization methods. As seen in \ref{fig:1} uniform initialization of extended weights has the smallest variance, but this method on average worse than others. It is worth paying attention to checking other values of $\theta$, where extended uniform parameters selects from $U[0, \theta]$. As due to large $\theta$ values, information from the teacher model may be lost.
 
 \begin{figure}[!t]
-  \subfloat{\includegraphics[width=0.5\textwidth]{accuracy.png}}
-  \subfloat{\includegraphics[width=0.5\textwidth]{loss.png}}\\
+  \subfloat{\includegraphics[width=0.5\textwidth]{base_acc.png}}
+  \subfloat{\includegraphics[width=0.5\textwidth]{base_loss.png}}\\
  \caption{Comparison of quality metrics for different initialization methods}
   \label{fig:1}
+\end{figure}
+
+\subsection{Error analysis}
+
+For the experiment we compare two ways of initialization: uniform initialization and initialization with $\varphi(\textbf{u}^*)$, where $\lambda_2 = 1$, i.e., preserving the teacher model weights and uniformly initializing extended ones. 
+
+\begin{figure}[!t]
+  \subfloat{\includegraphics[width=0.5\textwidth]{l2_acc.png}}
+  \subfloat{\includegraphics[width=0.5\textwidth]{l2_loss.png}}\\
+ \caption{Comparison of quality metrics for different initialization methods}
+  \label{fig:2}
 \end{figure}
 
 \newpage
