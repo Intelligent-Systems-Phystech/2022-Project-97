@@ -27,10 +27,10 @@
 \date{}
 \renewcommand{\undertitle}{}
 \renewcommand{\headeright}{}
-\renewcommand{\shorttitle}{Anti-Distillation: Knowledge Transfer from Simple Model to a Complex One}
+\renewcommand{\shorttitle}{Anti-Distillation: Knowledge Transfer from a Simple Model to the Complex One}
 
 \hypersetup{
-pdftitle={Anti-Distillation: Knowledge Transfer from Simple Model to a Complex One},
+pdftitle={Anti-Distillation: Knowledge Transfer from a Simple Model to the Complex One},
 pdfauthor={Kseniia~Petrushina},
 pdfkeywords={Distillation, Knowledge Transfer, Weight Initialization, Machine Learning},
 }
@@ -49,7 +49,9 @@ Training a model from scratch can lead to poor results or take a long time. To g
 
 Consider the distillation method. Statement of the initial problem is the transfer of knowledge from a cumbersome neural network or ensemble of ones to a smaller model in the classification problem. Hinton and others \citep{hinton2015distilling} were able to achieve this by training the student model to reproduce the probability distribution of the classes produced by the teacher model. The use of such soft targets helped to carry more information, so the student models generalization ability is comparable to the teachers. However, this research focuses on reducing model parameters under conditions of input data persistence. We want to solve the inverse problem: to keep the model properties under conditions of increasing sample complexity.
 
-This work proposes a method for increasing the complexity of the model based on a pre-trained one. This is done by growing the dimension of the weight space and initializing part of the student neural network with teacher model parameters. Our approach allows to speed up neural network training and obtain a more robust model. In this way, we can adapt the pre-trained model to more variable data and reuse previously learned information.
+This work proposes a method for increasing the complexity of the model based on a pre-trained one. Anti Distillation can be useful in cases where new classes come from the general population. 
+
+This is done by growing the dimension of the weight space and initializing part of the student neural network with teacher model parameters. Our approach allows to speed up neural network training and obtain a more robust model. In this way, we can adapt the pre-trained model to more variable data and reuse previously learned information.
 
 This paper presents computational experiments on various ways of complicating the model. We consider fully connected, convolutional layers and LSTM modules. The experiment compares uniform initialization with one based on a previously trained model and analyse differences in convergence rate, prediction variance, and achieved quality.
 
@@ -91,14 +93,14 @@ The function
 
 determines the student model parameters initialization $\mathbf{w}_1 = \varphi(\hat{\mathbf{u}})$.
 
-\section{Our setup}
+\section{Weight extension setup}
 \label{sec:setup}
 
 We construct a more complex model by extending fully connected layers and increasing number of feature maps in convolutional layers. There are different initialization methods for extended parameters:
 
 \begin{enumerate}
-    \item Zero initialization.
-    \item Uniform initialization $U[-\theta, \theta]$.
+    \item Zero initialization -- filling extended parameters with zeroes.
+    \item Uniform initialization $U[-\frac1{\sqrt{n}}, \frac1{\sqrt{n}}]$ -- filling extended parameters with uniformly distributed variables, $n$ is the number of layer input neurons.
 \end{enumerate}
 
 \section{Theory}
@@ -112,7 +114,7 @@ We define the function $\varphi: \mathbb{R}^{N_\text{tr}} \rightarrow \mathbb{R}
 where \[\mathcal{L} = \lambda_1 \mathcal{L}_f(\mathbf{w}, D_1^*) + \lambda_2 \mathcal{L}_2 (\mathbf{w}, \mathbf{u}) + \lambda_3 \mathcal{L}_3^\delta (\mathbf{w}, D_1^*) + \lambda_4 \mathcal{L}_4 \left(\displaystyle \frac{\partial^2 \mathcal{L}_f}{\partial \mathbf{w}^2}\right).\]
 \[\sum\limits_{i=1}^4 \lambda_i =1, \forall\; i \in \overline{1, 4}:\; \lambda_i \ge 0.\]
 
-$\mathcal{L}_f(\mathbf{w}, D_1^*)$ loss is responsible for having the optimal parameters on the $D_1^* = \{(\psi (\textbf{x}), y \;|\; (\textbf{x}, y) \in D_1\}$, $\psi: \mathbb{R}^{n_1} \rightarrow \mathbb{R}^{n_2}$. 
+$\mathcal{L}_f(\mathbf{w}, D_1^*)$ loss is responsible for having the optimal parameters on the $D_1^* = \{(\psi (\textbf{x}), y \;|\; (\textbf{x}, y) \in D_1\}$, $\psi: \mathbb{R}^{n_1} \rightarrow \mathbb{R}^{n_2}$ -- function that converts data from $D_1$ into a format accepted by the student model $f_{\text{st}}$.
 
 $\mathcal{L}_2 (\mathbf{w}, \mathbf{u}) = \|\textbf{u} - \textbf{w}[\textbf{u}]\|^2_2$ provides a small difference between the parameters of the teacher model and the student model in the respective places. 
 
@@ -141,7 +143,7 @@ The goal of computational experiment is to compare the performance of models dep
 
 \subsection{Configuration of algorithm run}
 
-Carry out the experiments as follows: train the teacher model, increase its complexity as described in \autoref{sec:setup}, and compare different ways of initializing the parameters of the model. There are three cases: uniform initialization of all model parameters, zero and uniform initialization of extended parameters. We compare them by measuring accuracy of predictions, cross-entropy loss value on validation sample, and prediction variance. Also we investigate the case of noisy input data, considering above quality measures depending on the percentage of image corrupted.
+Carry out the experiments as follows: train the teacher model, increase its complexity as described in \autoref{sec:setup}, and compare different ways of initializing the parameters of the model. There are three cases: uniform initialization of all model parameters, zero and uniform initialization of extended parameters. Optimization is done using Adam optimization algorithm \citep{adam}. We compare them by measuring accuracy of predictions, cross-entropy loss value on validation sample, and prediction variance. Also we investigate the case of noisy input data, considering above quality measures depending on the percentage of image corrupted.
 
 \subsection{List of expected tables and figures}
 
@@ -180,7 +182,7 @@ As seen in \ref{fig:2} models utilizing Anti-Distillation with $\lambda_2 = 1$ o
 
 \section{Conclusion}
 
-We proposed a new method for weight initialization of fully-connected neural newtorks, which helps to achieve higher accuracy on \textit{more complex} dataset and makes model more persistent to noise in input data. As a next step, we plan to consider a similar approach to other neural network architectures: CNN and RNN.
+We proposed a new method for weight initialization of fully-connected neural newtorks, which helps to achieve higher accuracy on \textit{more complex} dataset and makes model more persistent to noise in input data. As a next step, we plan to consider a similar approach to other neural network architectures: CNN and RNN, conduct experiments with different default parameters initialization.
 
 \bibliographystyle{plain}
 \bibliography{Petrushina2022AntiDistillation.bib}
