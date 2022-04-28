@@ -1,6 +1,6 @@
 <div align="center">
   <H1>
-    Anti-Distillation: Knowledge Transfer from Simple Model to a Complex One
+    Anti-Distillation: Knowledge Transfer from a Simple Model to the Complex One
   </H1>
 
   Ксения Евгеньевна Петрушина
